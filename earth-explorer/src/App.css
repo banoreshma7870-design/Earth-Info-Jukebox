@@ -17,8 +17,7 @@ body {
 .launch-screen {
   position: fixed;
   inset: 0;
-  background: linear-gradient(rgba(2, 6, 23, 0.75), rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 0.95)), 
-              url('/space-bg.jpg') no-repeat center center;
+  background: radial-gradient(circle at 50% 30%, #0f172a 0%, #020617 70%, #000000 100%);
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -29,6 +28,15 @@ body {
   cursor: pointer;
 }
 
+.launch-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
 
 .launch-nav {
   width: 100%;
@@ -72,10 +80,6 @@ body {
   color: #fff;
 }
 
-.launch-center-content h1 span {
-  color: #38bdf8;
-}
-
 .launch-description {
   color: #94a3b8;
   font-size: 16px;
@@ -83,7 +87,7 @@ body {
   margin-bottom: 32px;
 }
 
-/* --- AARON IKER / EDOARDO MERCATI STYLE HOVER BUTTON --- */
+/* --- DRIBBBLE-STYLE PILL BUTTON --- */
 .launch-cta-btn {
   background: #0f172a;
   color: #fff;
@@ -96,7 +100,7 @@ body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border-radius: 99px; /* Pill shape */
+  border-radius: 99px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -117,10 +121,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover background fill effect */
 .launch-cta-btn::before {
   content: '';
   position: absolute;
@@ -141,9 +144,28 @@ body {
   box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
 }
 
-/* Smooth sliding icon micro-interaction */
 .launch-cta-btn:hover .btn-icon-wrapper {
   transform: translateX(6px) scale(1.1);
+}
+
+/* --- TYPEWRITER & CURSOR ANIMATION --- */
+.typewriter-title {
+  display: inline-block;
+  overflow: hidden;
+  border-right: 0.15em solid #38bdf8;
+  white-space: nowrap;
+  animation: typing 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
+  max-width: 100%;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: #38bdf8; }
 }
 
 /* --- APP SHELL & SIDEBAR --- */
@@ -390,6 +412,79 @@ body {
   gap: 6px;
 }
 
+/* --- CONTINENT SUB-BAR & ROTATION LOCK --- */
+.continent-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.continent-bar-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.continent-chips {
+  display: flex;
+  gap: 8px;
+}
+
+.continent-chip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.continent-chip:hover {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.continent-chip.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.rotation-lock-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.rotation-lock-btn.locked {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
 /* --- GLOBE STAGE --- */
 .globe-section {
   display: flex;
@@ -503,8 +598,9 @@ body {
 .event-modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(2, 6, 23, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(2, 6, 23, 0.5); /* Lighter overlay to let the globe shine through */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -513,22 +609,45 @@ body {
 }
 
 .event-modal-card {
-  background: #090d16;
+  /* Deep space glassmorphism */
+  background: rgba(5, 9, 20, 0.65); 
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(56, 189, 248, 0.3);
   padding: 24px;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 100%;
   max-width: 440px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  /* Heavy drop shadow + subtle inner white rim light */
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Tactical grid & nebula glow inside the modal */
+.event-modal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(56, 189, 248, 0.12), transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px, 20px 20px;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 12px;
 }
 
 .event-status {
@@ -536,24 +655,36 @@ body {
   font-size: 10px;
   color: #38bdf8;
   letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.4); /* Neon text glow */
 }
 
+/* Upgraded Sci-Fi Close Button */
 .close-modal {
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
   color: #94a3b8;
   cursor: pointer;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
 }
 
 .close-modal:hover {
-  color: #fff;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-color: #f87171;
 }
 
 .event-modal-card h3 {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 18px;
   color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .modal-meta-grid {
@@ -568,14 +699,22 @@ body {
   color: #38bdf8;
 }
 
+/* Sci-Fi Terminal Data Boxes */
 .modal-desc-box {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 12px;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(255, 255, 255, 0.2); /* Tech HUD border highlight */
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.modal-desc-box:hover {
+  background: rgba(56, 189, 248, 0.05);
+  border-left-color: #38bdf8; /* Highlight turns blue on hover */
 }
 
 .desc-title {
@@ -591,6 +730,7 @@ body {
   line-height: 1.5;
 }
 
+/* Glowing Action Button */
 .modal-stream-btn {
   background: #38bdf8;
   color: #000;
@@ -598,15 +738,22 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   font-size: 12px;
-  padding: 10px;
+  padding: 12px;
   text-decoration: none;
-  letter-spacing: 1px;
-  border-radius: 4px;
-  margin-top: 4px;
+  letter-spacing: 1.5px;
+  border-radius: 6px;
+  margin-top: 8px;
+  cursor: pointer;
+  border: none;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); /* Ambient glow */
+  transition: all 0.3s ease;
 }
 
 .modal-stream-btn:hover {
-  background: #7dd3fc;
+  filter: brightness(1.2);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); /* Intense glow on hover */
+  transform: translateY(-2px);
 }
 
 /* --- CATEGORIES GRID --- */
@@ -785,6 +932,20 @@ body {
   color: #38bdf8;
 }
 
+/* Add custom scrollbar styling for the region modal content */
+.event-modal-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.event-modal-card::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.3);
+  border-radius: 4px;
+}
+
+.event-modal-card::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 1024px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -795,24 +956,4 @@ body {
   .category-grid, .events-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* --- TYPEWRITER & CURSOR ANIMATION --- */
-.typewriter-title {
-  display: inline-block;
-  overflow: hidden;
-  border-right: 0.15em solid #38bdf8; /* Terminal blinking cursor */
-  white-space: nowrap;
-  animation: typing 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
-  max-width: 100%;
-}
-
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: #38bdf8; }
 }
