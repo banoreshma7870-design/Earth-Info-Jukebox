@@ -1,0 +1,72 @@
+[
+  {
+    "id": "m1",
+    "statement": "The Great Wall of China is visible from space with the naked eye.",
+    "isFact": false,
+    "explanation": "Confirmed debunked by every astronaut who has looked. NASA imagery shows the Wall is only ~5-10 m wide and roughly the same colour as the ground around it. You cannot see it from low Earth orbit without magnification.",
+    "source": "NASA / Chris Hadfield"
+  },
+  {
+    "id": "m2",
+    "statement": "A single lightning bolt heats the air hotter than the surface of the Sun.",
+    "isFact": true,
+    "explanation": "A lightning channel reaches ~30,000 °C. The Sun's photosphere is ~5,500 °C. For a few microseconds, a lightning bolt is ~5× hotter than the Sun's surface.",
+    "source": "NOAA / National Weather Service"
+  },
+  {
+    "id": "m3",
+    "statement": "The Sahara Desert is expanding so fast it will swallow Europe by 2100.",
+    "isFact": false,
+    "explanation": "The Sahara does fluctuate — but NASA MODIS data shows it has oscillated by ~10% over a 20,000-year cycle. There is no evidence of Europe-scale expansion. In fact, parts of the Sahel are greening slightly.",
+    "source": "NASA MODIS / University of Maryland"
+  },
+  {
+    "id": "m4",
+    "statement": "Water goes down the drain in opposite directions in the Northern and Southern hemispheres.",
+    "isFact": false,
+    "explanation": "The Coriolis effect is far too weak at drain scale. Your sink's basin shape and the way you pour water in determine rotation. True hemispheric Coriolis effects only dominate at the scale of cyclones.",
+    "source": "NASA Science / Veritasium"
+  },
+  {
+    "id": "m5",
+    "statement": "The Amazon rainforest produces 20% of the world's oxygen.",
+    "isFact": false,
+    "explanation": "This often-repeated figure is wrong. The Amazon consumes almost as much O₂ as it produces through respiration + decay. Net contribution to atmospheric O₂ is closer to 6-9%. Marine phytoplankton produces more than any rainforest.",
+    "source": "Yadvinder Malhi / Science journal"
+  },
+  {
+    "id": "m6",
+    "statement": "Everest is still growing — the Himalayas rise by a few millimetres every year.",
+    "isFact": true,
+    "explanation": "Indian plate still shoves north into Eurasia at ~5 cm/year. GPS stations and ISRO's IRNSS data confirm Everest gains about 4 mm/year — minus small losses from erosion and earthquakes (the 2015 Nepal quake actually dropped it 2.5 cm).",
+    "source": "ISRO / Survey of India / USGS"
+  },
+  {
+    "id": "m7",
+    "statement": "A day on Venus is longer than its year.",
+    "isFact": true,
+    "explanation": "One Venusian day (full rotation) = 243 Earth days. One Venusian year (orbit around Sun) = 225 Earth days. A day on Venus literally lasts longer than its year.",
+    "source": "NASA JPL"
+  },
+  {
+    "id": "m8",
+    "statement": "You can see satellites like Cartosat-3 with the naked eye at dawn or dusk.",
+    "isFact": true,
+    "explanation": "Low-Earth-orbit sats are large enough and reflective enough to shine like slow-moving stars when sunlight catches them but your sky is already dark. Best window is the hour after sunset or before sunrise. The ISS is the easiest to spot.",
+    "source": "Heavens-Above / CelesTrak"
+  },
+  {
+    "id": "m9",
+    "statement": "Antarctica is gaining ice, so climate change isn't real.",
+    "isFact": false,
+    "explanation": "A common cherry-pick. East Antarctica gains a little ice from increased snowfall, but West Antarctica loses far more — net mass loss averaged 150 Gt/year (2002-2023) per NASA GRACE satellites. Total ice: declining.",
+    "source": "NASA GRACE-FO / IPCC AR6"
+  },
+  {
+    "id": "m10",
+    "statement": "The Moon's gravity causes two tides a day — one on each side of Earth.",
+    "isFact": true,
+    "explanation": "One tidal bulge sits under the Moon's pull. The other sits on the opposite side — because that side of Earth is pulled less than the planet's centre, so water lags behind. Earth rotates through both bulges daily.",
+    "source": "NOAA / NASA"
+  }
+]
