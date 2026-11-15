@@ -24,6 +24,23 @@ import {
 import "./App.css";
 import OrbitalAtlas from "./components/OrbitalAtlas";
 import { audio } from "./audio";
+import ChatPanel from "./components/ChatPanel";
+import EventDetailPanel from "./components/EventDetailPanel";
+import RegionPickerModal from "./components/RegionPickerModal";
+import RegionChip from "./components/RegionChip";
+import NarrationButton from "./components/NarrationButton";
+import MythBuster from "./components/MythBuster";
+import EarthSecretsView from "./views/EarthSecrets";
+import BiodiversityView from "./views/Biodiversity";
+import { fetchEonet, colorForCategory, type EonetEvent } from "./lib/eonet";
+import {
+  loadRegion,
+  saveRegion,
+  bboxForEonet,
+  regionPath as regionPathLabel,
+  type Region as FilterRegion,
+} from "./lib/regionFilter";
+import type { GaiaAppContext } from "./lib/chatContext";
 
 interface SatelliteNode {
   id: string;
@@ -146,18 +163,118 @@ function App() {
     { sender: "ai", text: "ACCESS GRANTED. I am GAIA ORACLE, your tactical AI co-pilot. Want to test your planetary knowledge? Type 'play' or click below to start the Earth Fact or Myth challenge.", options: ["Play Fact or Myth", "Tell me about Gaia Jukebox"] }
   ]);
 
+  // === NEW: Region filter, AI chat, EONET, event detail ===
+  const [regionFilter, setRegionFilter] = useState<FilterRegion | null>(loadRegion());
+  const [regionPickerOpen, setRegionPickerOpen] = useState(false);
+  const [pendingChannel, setPendingChannel] = useState<string | null>(null);
+  const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [eonetEvents, setEonetEvents] = useState<EonetEvent[]>([]);
+  const [eonetLoading, setEonetLoading] = useState(false);
+  const [eonetError, setEonetError] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EonetEvent | null>(null);
+
   const categories = [
     { name: "Ocean Explorer", icon: Waves, detail: "Marine Regions & Calamities" },
     { name: "Earth's Secrets", icon: Mountain, detail: "Tectonic & Terrain Intel" },
     { name: "Planet in Motion", icon: Flame, detail: "NASA Data & Monitoring" },
     { name: "Endangered Species", icon: Leaf, detail: "Habitat & Wildlife" },
     { name: "Satellite Fleet", icon: Satellite, detail: "Top Orbital Nodes" },
+    { name: "Myth Buster", icon: Sparkles, detail: "Flip the record. Bust the myth." },
   ];
 
   useEffect(() => {
     if (isLaunched && soundEnabled) audio.playChannelTone(activeTab);
     else audio.stopTone();
   }, [activeTab, isLaunched, soundEnabled]);
+
+  // === EONET fetch (region-aware, 5 min refresh) ===
+  useEffect(() => {
+    if (!isLaunched) return;
+    let cancelled = false;
+    const load = async () => {
+      setEonetLoading(true);
+      setEonetError(null);
+      try {
+        const data = await fetchEonet({
+          bbox: regionFilter ? bboxForEonet(regionFilter) : undefined,
+          limit: 24,
+        });
+        if (!cancelled) setEonetEvents(data);
+      } catch (e: any) {
+        if (!cancelled) setEonetError(e?.message || "EONET feed unavailable");
+      } finally {
+        if (!cancelled) setEonetLoading(false);
+      }
+    };
+    load();
+    const t = setInterval(load, 5 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      clearInterval(t);
+    };
+  }, [isLaunched, regionFilter]);
+
+  // === Chat context (grounds AI in current view) ===
+  const chatContext: GaiaAppContext = {
+    view: activeTab,
+    selectedChannel: activeTab,
+    selectedEvent: selectedEvent
+      ? {
+          id: selectedEvent.id,
+          title: selectedEvent.title,
+          category: selectedEvent.category,
+          date: selectedEvent.date,
+          lat: selectedEvent.lat ?? undefined,
+          lon: selectedEvent.lon ?? undefined,
+        }
+      : null,
+    selectedRegion: regionFilter
+      ? {
+          country: regionFilter.country,
+          state: regionFilter.state,
+          area: regionFilter.area,
+          center: regionFilter.center,
+        }
+      : null,
+  };
+
+  // === Channel click: open region picker first if none chosen ===
+  const openChannelWithRegion = (channelName: string) => {
+    if (soundEnabled) audio.playClick();
+    if (!regionFilter) {
+      setPendingChannel(channelName);
+      setRegionPickerOpen(true);
+      return;
+    }
+    setActiveTab(channelName);
+    setSelectedRegion(null);
+    setSelectedSatellite(null);
+  };
+
+  const handleRegionConfirm = (r: FilterRegion) => {
+    saveRegion(r);
+    setRegionFilter(r);
+    setRegionPickerOpen(false);
+    if (pendingChannel) {
+      setActiveTab(pendingChannel);
+      setPendingChannel(null);
+    }
+    // Fly globe to region center
+    if (globeInstanceRef.current && r.center) {
+      globeInstanceRef.current.controls().autoRotate = false;
+      globeInstanceRef.current.pointOfView(
+        { lat: r.center.lat, lng: r.center.lon, altitude: 1.5 },
+        1400
+      );
+    }
+  };
+
+  const flyGlobeTo = (lat: number, lon: number) => {
+    if (globeInstanceRef.current) {
+      globeInstanceRef.current.controls().autoRotate = false;
+      globeInstanceRef.current.pointOfView({ lat, lng: lon, altitude: 1.5 }, 1600);
+    }
+  };
 
   // Globe Initialization
   useEffect(() => {
@@ -422,7 +539,7 @@ function App() {
         <div className="side-label">JUKEBOX CHANNELS</div>
         <nav className="navigation">
           {categories.map(({ name, icon: Icon }) => (
-            <button key={name} className={`nav-item ${activeTab === name ? "active" : ""}`} onClick={() => handleTabChange(name)}>
+            <button key={name} className={`nav-item ${activeTab === name ? "active" : ""}`} onClick={() => openChannelWithRegion(name)}>
               <Icon size={18} /> {name}
             </button>
           ))}
@@ -434,9 +551,16 @@ function App() {
 
       <section className="main-content">
         <header className="topbar">
-          <div className="breadcrumb"><span>SECRETS OF GAIA</span><span className="slash">/</span><strong>{activeTab.toUpperCase()}</strong></div>
+          <div className="breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span>SECRETS OF GAIA</span>
+            <span className="slash">/</span>
+            <strong>{activeTab.toUpperCase()}</strong>
+            {regionFilter && (
+              <RegionChip region={regionFilter} onChange={() => setRegionPickerOpen(true)} />
+            )}
+          </div>
           <div className="top-actions">
-            <button className="icon-button" onClick={() => { setIsChatOpen(!isChatOpen); if (soundEnabled) audio.playClick(); }}><MessageSquare size={18} color="#38bdf8" /></button>
+            <button className="icon-button" onClick={() => { setAiChatOpen(true); if (soundEnabled) audio.playClick(); }} title="GAIA Oracle AI Co-Pilot"><MessageSquare size={18} color="#38bdf8" /></button>
             <button className="icon-button" onClick={() => { setSoundEnabled(!soundEnabled); if (!soundEnabled) audio.playClick(); }}>
               {soundEnabled ? <Volume2 size={18} color="#38bdf8" /> : <VolumeX size={18} />}
             </button>
@@ -589,9 +713,9 @@ function App() {
               <h2>Select a frequency</h2>
             </div>
           </div>
-          <div className="category-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+          <div className="category-grid" style={{ gridTemplateColumns: 'repeat(6, 1fr)' }}>
             {categories.map(({ name, icon: Icon, detail }) => (
-              <button className="category-card" key={name} onClick={() => handleTabChange(name)}>
+              <button className="category-card" key={name} onClick={() => openChannelWithRegion(name)}>
                 <div className="category-icon"><Icon size={20} /></div>
                 <div><h3>{name}</h3><p>{detail}</p></div>
                 <ArrowUpRight className="card-arrow" size={16} />
@@ -620,12 +744,119 @@ function App() {
           </section>
         )}
 
+        {/* === PLANET IN MOTION: live EONET events === */}
+        {activeTab === "Planet in Motion" && (
+          <section className="events-section">
+            <div className="section-title-row">
+              <div>
+                <span className="section-kicker">LIVE FEED · NASA EONET</span>
+                <h2>Now playing — Earth's live events</h2>
+              </div>
+              <span className="live-tag"><span /> {eonetLoading ? "SYNCING…" : eonetError ? "SIGNAL LOST" : `${eonetEvents.length} TRACKS`}</span>
+            </div>
+            {eonetError && (
+              <div style={{ background: 'rgba(239,68,68,0.08)', borderLeft: '3px solid #ef4444', padding: '0.8rem 1rem', color: '#f87171', fontFamily: 'JetBrains Mono', fontSize: 12, borderRadius: 4, marginBottom: 12 }}>
+                ⚠ {eonetError}. Retrying every 5 min.
+              </div>
+            )}
+            <div className="events-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+              {eonetEvents.map((ev, idx) => {
+                const color = colorForCategory(ev.categoryId);
+                return (
+                  <div
+                    key={ev.id}
+                    className="event-card"
+                    onClick={() => { if (soundEnabled) audio.playClick(); setSelectedEvent(ev); }}
+                    style={{ cursor: 'pointer', borderLeft: `4px solid ${color}` }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                      <span className="event-status" style={{ color }}>● {ev.category.toUpperCase()}</span>
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#4a5680' }}>TRACK {String(idx + 1).padStart(2, '0')} / {String(eonetEvents.length).padStart(2, '0')}</span>
+                    </div>
+                    <h3 style={{ fontSize: 14, margin: 0 }}>{ev.title}</h3>
+                    <p style={{ marginTop: 6, fontSize: 12, color: '#8893b5' }}>
+                      {new Date(ev.date).toLocaleDateString()} · {ev.lat !== null && ev.lon !== null ? `${ev.lat.toFixed(1)}°, ${ev.lon.toFixed(1)}°` : 'Multi-point'}
+                    </p>
+                    <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }} onClick={(e) => e.stopPropagation()}>
+                      <NarrationButton
+                        id={`evt-${ev.id}`}
+                        event={{
+                          title: ev.title,
+                          category: ev.category,
+                          date: ev.date,
+                          lat: ev.lat ?? undefined,
+                          lon: ev.lon ?? undefined,
+                          magnitude: ev.magnitude ?? undefined,
+                          source: ev.sources[0]?.id,
+                        }}
+                        muted={!soundEnabled}
+                      />
+                      <span className="event-link">OPEN TRACK ↗</span>
+                    </div>
+                  </div>
+                );
+              })}
+              {!eonetLoading && eonetEvents.length === 0 && (
+                <div style={{ color: '#8893b5', fontFamily: 'JetBrains Mono', fontSize: 12, padding: '1rem' }}>
+                  No open events {regionFilter ? `inside ${regionPathLabel(regionFilter)}` : 'right now'}. Try changing region.
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {activeTab === "Earth's Secrets" && (
+          <section className="events-section">
+            <EarthSecretsView
+              region={regionFilter}
+              onShowOnGlobe={(lat, lon) => flyGlobeTo(lat, lon)}
+              muted={!soundEnabled}
+            />
+          </section>
+        )}
+
+        {activeTab === "Endangered Species" && (
+          <section className="events-section">
+            <BiodiversityView
+              region={regionFilter}
+              onShowOnGlobe={(lat, lon) => flyGlobeTo(lat, lon)}
+              muted={!soundEnabled}
+            />
+          </section>
+        )}
+
+        {activeTab === "Myth Buster" && (
+          <section className="events-section">
+            <MythBuster />
+          </section>
+        )}
+
         <footer className="footer">
           <span>SECRETS OF GAIA © 2026</span>
           <span>BUILT FOR NASA HACKATHON <span className="footer-star">✦</span></span>
         </footer>
       </section>
       {satViewOpen && <OrbitalAtlas onClose={() => setSatViewOpen(false)} />}
+
+      {/* === NEW: Region Picker, AI Chat, Event Detail === */}
+      <RegionPickerModal
+        open={regionPickerOpen}
+        onClose={() => { setRegionPickerOpen(false); setPendingChannel(null); }}
+        onConfirm={handleRegionConfirm}
+        initial={regionFilter}
+      />
+      <ChatPanel
+        open={aiChatOpen}
+        onClose={() => setAiChatOpen(false)}
+        context={chatContext}
+      />
+      <EventDetailPanel
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        onAskAi={(ev) => { setSelectedEvent(ev); setAiChatOpen(true); }}
+        onShowOnGlobe={(ev) => { if (ev.lat !== null && ev.lon !== null) flyGlobeTo(ev.lat, ev.lon); }}
+        muted={!soundEnabled}
+      />
     </main>
   );
 }

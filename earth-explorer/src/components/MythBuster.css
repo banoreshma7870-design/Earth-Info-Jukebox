@@ -1,0 +1,185 @@
+.myth-wrap {
+  padding: 1.8rem;
+  max-width: 720px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+}
+.myth-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.myth-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: #a855f7;
+  text-transform: uppercase;
+}
+.myth-progress {
+  display: flex;
+  gap: 6px;
+}
+.myth-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(74, 158, 255, 0.12);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+}
+.myth-dot.ok { background: #22c55e; border-color: #22c55e; }
+.myth-dot.bad { background: #ef4444; border-color: #ef4444; }
+.myth-dot.cur { box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25); }
+
+.myth-card-stage {
+  perspective: 1200px;
+  min-height: 340px;
+  margin-bottom: 1.4rem;
+}
+.myth-card {
+  background: rgba(13, 21, 48, 0.5);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 10px;
+  padding: 2rem 2.2rem;
+  min-height: 340px;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s;
+}
+.myth-card.is-right {
+  box-shadow: 0 0 40px rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+.myth-card.is-wrong {
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+.myth-side {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #a855f7;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.myth-claim {
+  color: #e8ecf5;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.5rem;
+  font-style: italic;
+  border-left: 3px solid #a855f7;
+  padding-left: 1rem;
+}
+.myth-prompt {
+  color: #8893b5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.myth-verdict {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.myth-verdict.ok { color: #22c55e; }
+.myth-verdict.bad { color: #ef4444; }
+.myth-reveal {
+  color: #e8ecf5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+.myth-reveal strong {
+  color: #a855f7;
+}
+.myth-explanation {
+  color: #c4ccdf;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 1rem;
+}
+.myth-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #22d3ee;
+}
+
+.myth-choices {
+  display: flex;
+  gap: 1rem;
+}
+.myth-choice {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid;
+  border-radius: 8px;
+  background: rgba(13, 21, 48, 0.5);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.myth-myth {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+.myth-myth:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+.myth-fact {
+  color: #22c55e;
+  border-color: #22c55e;
+}
+.myth-fact:hover {
+  background: rgba(34, 197, 94, 0.1);
+}
+.myth-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, #a855f7, #38bdf8);
+  color: #040813;
+  border: none;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  cursor: pointer;
+}
+.myth-final h2 {
+  color: #e8ecf5;
+  font-size: 28px;
+  margin: 0.5rem 0;
+}
+.myth-final p {
+  color: #c4ccdf;
+  margin-bottom: 1.5rem;
+}
+.myth-restart {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #22d3ee;
+  color: #040813;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  cursor: pointer;
+}

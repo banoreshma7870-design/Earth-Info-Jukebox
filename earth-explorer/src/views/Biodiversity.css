@@ -1,0 +1,35 @@
+.bio-wrap { padding: 1.8rem; font-family: 'Inter', sans-serif; }
+.bio-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: #22c55e;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.bio-title {
+  color: #e8ecf5;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.bio-sub {
+  color: #8893b5;
+  font-size: 14px;
+  margin: 0.4rem 0 1.5rem;
+}
+.bio-empty {
+  background: rgba(34, 197, 94, 0.05);
+  border-left: 3px solid #22c55e;
+  padding: 0.7rem 1rem;
+  color: #c4ccdf;
+  font-size: 12px;
+  margin-bottom: 1.2rem;
+  border-radius: 4px;
+}
+.bio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
