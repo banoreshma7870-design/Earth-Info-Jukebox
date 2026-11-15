@@ -1,0 +1,282 @@
+/* src/components/OrbitalAtlas.css
+   Styles for the fullscreen Orbital Atlas overlay.
+   Uses the same font + color palette as the main GAIA Jukebox UI. */
+
+.orbital-atlas {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #040813;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  color: #e8ecf5;
+  overflow: hidden;
+}
+
+.oa-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: grab;
+}
+.oa-canvas:active { cursor: grabbing; }
+
+/* Top bar */
+.oa-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(4, 8, 19, 0.9), transparent);
+  z-index: 10;
+  pointer-events: none;
+}
+.oa-title {
+  display: flex; align-items: center; gap: 0.6rem;
+  pointer-events: auto;
+  color: #22d3ee;
+}
+.oa-title .t {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #e8ecf5;
+}
+.oa-title .ver {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: #4a5680;
+  margin-left: 0.5rem;
+}
+.oa-close {
+  pointer-events: auto;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  background: transparent;
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  border-radius: 4px;
+  color: #8893b5;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.oa-close:hover { color: #e8ecf5; border-color: rgba(74, 158, 255, 0.4); }
+
+/* Satellite labels */
+.oa-sat-label {
+  position: absolute;
+  z-index: 15;
+  transform: translate(-50%, -50%);
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 2px 5px;
+  border: 1px solid;
+  background: rgba(4, 8, 19, 0.7);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s;
+}
+.oa-sat-label:hover { transform: translate(-50%, -50%) scale(1.1); }
+.oa-sat-label.selected {
+  color: #040813 !important;
+  font-weight: 600;
+}
+
+/* Dossier */
+.oa-dossier {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  width: 280px;
+  background: rgba(13, 21, 48, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(74, 158, 255, 0.3);
+  padding: 1rem;
+  z-index: 10;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+}
+.doss-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.15);
+  margin-bottom: 0.7rem;
+}
+.doss-code {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: #f59e0b;
+  text-transform: uppercase;
+}
+.doss-flag {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+.doss-flag.india { color: #ff9933; border-color: #ff9933; }
+.doss-flag.us { color: #60a5fa; border-color: #60a5fa; }
+.doss-flag.intl { color: #8893b5; border-color: #8893b5; }
+.doss-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.2rem;
+}
+.doss-sub {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.6rem;
+  color: #8893b5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.doss-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: rgba(74, 158, 255, 0.15);
+  margin-bottom: 0.7rem;
+}
+.doss-stats > div {
+  background: rgba(13, 21, 48, 0.9);
+  padding: 0.5rem;
+}
+.doss-stats .k {
+  display: block;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.5rem;
+  color: #4a5680;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+.doss-stats .v {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.78rem;
+  color: #e8ecf5;
+}
+.doss-task {
+  padding: 0.6rem;
+  border: 1px dashed #f59e0b;
+  background: rgba(245, 158, 11, 0.04);
+  margin-bottom: 0.5rem;
+}
+.doss-task .lbl {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: #f59e0b;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.doss-task .val {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+/* Fleet selector */
+.oa-fleet {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  right: 320px;
+  padding: 0.7rem 1rem;
+  background: rgba(13, 21, 48, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  z-index: 10;
+}
+.fleet-btn {
+  padding: 0.5rem 0.8rem;
+  background: transparent;
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  color: #8893b5;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  white-space: nowrap;
+}
+.fleet-btn:hover { color: #e8ecf5; }
+.fleet-btn.selected {
+  border-color: #f59e0b;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+.fleet-btn .dot {
+  width: 8px; height: 8px;
+  flex-shrink: 0;
+}
+
+/* Controls */
+.oa-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+.oa-ctrl {
+  padding: 0.5rem 0.7rem;
+  background: rgba(13, 21, 48, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  color: #e8ecf5;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.oa-ctrl:hover { border-color: #22d3ee; color: #22d3ee; }
+.oa-speed {
+  padding: 0.5rem 0.7rem;
+  background: rgba(13, 21, 48, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: #f59e0b;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Scrollbar */
+.oa-dossier::-webkit-scrollbar,
+.oa-fleet::-webkit-scrollbar { width: 4px; height: 4px; }
+.oa-dossier::-webkit-scrollbar-thumb,
+.oa-fleet::-webkit-scrollbar-thumb { background: rgba(74, 158, 255, 0.25); }
+
+@media (max-width: 800px) {
+  .oa-dossier { width: calc(100% - 40px); top: auto; bottom: 150px; max-height: 40vh; }
+  .oa-fleet { right: 20px; }
+}

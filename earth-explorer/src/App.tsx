@@ -21,6 +21,7 @@ import {
   Send,
 } from "lucide-react";
 import "./App.css";
+import OrbitalAtlas from "./components/OrbitalAtlas";
 import { audio } from "./audio";
 
 interface NasaEvent {
@@ -75,6 +76,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<NasaEvent | null>(null);
+  const [satViewOpen, setSatViewOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Chatbot & Game State
@@ -471,6 +473,15 @@ function App() {
               {soundEnabled ? <Volume2 size={18} color="#38bdf8" /> : <VolumeX size={18} />}
             </button>
             <div className="status"><span /> SYSTEM ONLINE</div>
+            <button
+  className="sat-launch-btn"
+  onClick={() => { setSatViewOpen(true); if (soundEnabled) audio.playClick(); }}
+  title="Launch Orbital Atlas"
+>
+  <span className="pulse-dot" />
+  <Satellite size={14} />
+  Launch Sat View
+</button>
             <button className="icon-button"><Search size={18} /></button>
             <button className="icon-button"><Menu size={18} /></button>
           </div>
@@ -728,6 +739,7 @@ function App() {
           <span>BUILT FOR NASA HACKATHON <span className="footer-star">✦</span></span>
         </footer>
       </section>
+      {satViewOpen && <OrbitalAtlas onClose={() => setSatViewOpen(false)} />}
     </main>
   );
 }
